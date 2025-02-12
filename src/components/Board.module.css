@@ -1,0 +1,331 @@
+.board {
+  background-color: #deb887;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.board_grid {
+  position: relative;
+  width: 480px;
+  height: 540px;
+}
+/** border  **/
+.board_grid::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  border: solid 2px #8b4513;
+  top: 0;
+  left: 0;
+  width: calc(100% + 1px);
+  height: calc(100% + 1px);
+  box-sizing: border-box;
+}
+
+/* 楚河汉界文字样式 */
+.river_text {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 32px;
+  font-weight: bold;
+  color: #8b4513;
+  z-index: 2;
+  user-select: none;
+}
+
+.river_text.left {
+  left: 120px;
+}
+
+.river_text.right {
+  right: 120px;
+}
+
+/* Cross mark */
+.cross_mark {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  color: #8b4513;
+  transform: translate(-50%, -50%);
+}
+
+/* 米字斜线（士的移动路径） */
+.cross_line {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: 
+    /* 红方士的米字 */ linear-gradient(
+        45deg,
+        transparent calc(50% - 1px),
+        #8b4513 calc(50% - 1px),
+        #8b4513 calc(50% + 1px),
+        transparent calc(50% + 1px)
+      )
+      180px 420px / 120px 120px no-repeat,
+    linear-gradient(
+        -45deg,
+        transparent calc(50% - 1px),
+        #8b4513 calc(50% - 1px),
+        #8b4513 calc(50% + 1px),
+        transparent calc(50% + 1px)
+      )
+      180px 420px / 120px 120px no-repeat,
+    /* 黑方士的米字 */
+      linear-gradient(
+        45deg,
+        transparent calc(50% - 1px),
+        #8b4513 calc(50% - 1px),
+        #8b4513 calc(50% + 1px),
+        transparent calc(50% + 1px)
+      )
+      180px 0 / 120px 120px no-repeat,
+    linear-gradient(
+        -45deg,
+        transparent calc(50% - 1px),
+        #8b4513 calc(50% - 1px),
+        #8b4513 calc(50% + 1px),
+        transparent calc(50% + 1px)
+      )
+      180px 0 / 120px 120px no-repeat;
+  pointer-events: none;
+}
+
+.board_lines_red,
+.board_lines_black {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.board_lines_red::before,
+.board_lines_black::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: #8b4513;
+}
+
+/* 红方横线 */
+.board_lines_red::before {
+  top: 300px;
+  box-shadow: 0 60px #8b4513, 0 120px #8b4513, 0 180px #8b4513, 0 240px #8b4513;
+}
+
+/* 黑方横线 */
+.board_lines_black::before {
+  top: 0;
+  box-shadow: 0 60px #8b4513, 0 120px #8b4513, 0 180px #8b4513, 0 240px #8b4513;
+}
+
+/* 红方竖线 */
+.board_lines_red::after {
+  content: "";
+  position: absolute;
+  width: 1px;
+  height: 240px;
+  top: 300px;
+  left: 0;
+  background: #8b4513;
+  box-shadow: 60px 0 #8b4513, 120px 0 #8b4513, 180px 0 #8b4513, 240px 0 #8b4513,
+    300px 0 #8b4513, 360px 0 #8b4513, 420px 0 #8b4513, 480px 0 #8b4513;
+}
+
+/* 黑方竖线 */
+.board_lines_black::after {
+  content: "";
+  position: absolute;
+  width: 1px;
+  height: 240px;
+  top: 0;
+  left: 0;
+  background: #8b4513;
+  box-shadow: 60px 0 #8b4513, 120px 0 #8b4513, 180px 0 #8b4513, 240px 0 #8b4513,
+    300px 0 #8b4513, 360px 0 #8b4513, 420px 0 #8b4513, 480px 0 #8b4513;
+}
+
+.board_lines::after {
+  content: "";
+  position: absolute;
+  background-color: #8b4513;
+}
+
+/* 竖线 */
+.board_lines::after {
+  width: 1px;
+  height: 100%;
+  left: 0;
+  /* 在楚河汉界处（第5行）只显示第1列和第9列的竖线 */
+  background: #8b4513;
+  box-shadow: 
+    /* 第2列到第8列的竖线，在楚河汉界处隐藏 */ 60px 0
+      linear-gradient(
+        to bottom,
+        #8b4513 0%,
+        #8b4513 44.4%,
+        transparent 44.4%,
+        transparent 55.6%,
+        #8b4513 55.6%,
+        #8b4513 100%
+      ),
+    120px 0
+      linear-gradient(
+        to bottom,
+        #8b4513 0%,
+        #8b4513 44.4%,
+        transparent 44.4%,
+        transparent 55.6%,
+        #8b4513 55.6%,
+        #8b4513 100%
+      ),
+    180px 0
+      linear-gradient(
+        to bottom,
+        #8b4513 0%,
+        #8b4513 44.4%,
+        transparent 44.4%,
+        transparent 55.6%,
+        #8b4513 55.6%,
+        #8b4513 100%
+      ),
+    240px 0
+      linear-gradient(
+        to bottom,
+        #8b4513 0%,
+        #8b4513 44.4%,
+        transparent 44.4%,
+        transparent 55.6%,
+        #8b4513 55.6%,
+        #8b4513 100%
+      ),
+    300px 0
+      linear-gradient(
+        to bottom,
+        #8b4513 0%,
+        #8b4513 44.4%,
+        transparent 44.4%,
+        transparent 55.6%,
+        #8b4513 55.6%,
+        #8b4513 100%
+      ),
+    360px 0
+      linear-gradient(
+        to bottom,
+        #8b4513 0%,
+        #8b4513 44.4%,
+        transparent 44.4%,
+        transparent 55.6%,
+        #8b4513 55.6%,
+        #8b4513 100%
+      ),
+    420px 0
+      linear-gradient(
+        to bottom,
+        #8b4513 0%,
+        #8b4513 44.4%,
+        transparent 44.4%,
+        transparent 55.6%,
+        #8b4513 55.6%,
+        #8b4513 100%
+      ),
+    /* 第9列的竖线，完整显示 */ 480px 0 #8b4513;
+}
+
+/* 横线 */
+.board_lines::before {
+  width: 100%;
+  height: 1px;
+  top: 0;
+  box-shadow: 0 60px #8b4513, 0 120px #8b4513, 0 180px #8b4513, 0 240px #8b4513,
+    0 300px #8b4513, 0 360px #8b4513, 0 420px #8b4513, 0 480px #8b4513,
+    0 540px #8b4513;
+}
+
+.chess_piece {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin-left: 0;
+  margin-top: 0;
+  z-index: 100;
+}
+
+.chess_piece:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  z-index: 200;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.chess_piece.red {
+  background-color: #f4cccc;
+  border: 2px solid #cc0000;
+  color: #cc0000;
+}
+
+.chess_piece.black {
+  background-color: #d9d9d9;
+  border: 2px solid #000000;
+  color: #000000;
+}
+
+.chess_piece.selected {
+  box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+}
+
+.chess_piece.disabled:hover {
+  transform: translate(-50%, -50%);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.available_move {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.available_move:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.available_move.red_move {
+  border: 2px dashed #ff4d4f;
+}
+
+.available_move.black_move {
+  border: 2px dashed #000;
+}
+
+.capturable {
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+  z-index: 150;
+}
+
+.capturable:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  z-index: 200;
+}
