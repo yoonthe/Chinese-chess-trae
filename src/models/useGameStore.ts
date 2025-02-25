@@ -6,7 +6,7 @@ import {
   INITIAL_PIECES,
   ChessPieceType,
 } from "../types/chess";
-import { AIPlayer } from "./useAIPlayer";
+import { AIPlayer, AIDifficulty } from "../ai/AIPlayer";
 
 interface GameStore {
   // 游戏时间（秒）
@@ -28,6 +28,8 @@ interface GameStore {
   isGameOver: boolean;
   // 获胜方
   winner: ChessType | null;
+  // AI难度
+  aiDifficulty: AIDifficulty;
 
   // Actions
   incrementTime: () => void;
@@ -35,9 +37,10 @@ interface GameStore {
   calculateAvailableMoves: (piece: IChessPiece) => void;
   movePiece: (from: Position, to: Position) => void;
   resetGame: () => void;
+  setAIDifficulty: (difficulty: AIDifficulty) => void;
 }
 
-const aiPlayer = new AIPlayer(3);
+const aiPlayer = new AIPlayer();
 
 const useGameStore = create<GameStore>((set, get) => ({
   gameTime: 0,
@@ -51,6 +54,7 @@ const useGameStore = create<GameStore>((set, get) => ({
   },
   isGameOver: false,
   winner: null,
+  aiDifficulty: AIDifficulty.EASY,
 
   incrementTime: () => set((state) => ({ gameTime: state.gameTime + 1 })),
 
@@ -65,9 +69,13 @@ const useGameStore = create<GameStore>((set, get) => ({
 
   calculateAvailableMoves: (piece) => {
     const { pieces } = get();
-    // 直接使用棋子实例的calculateMoves方法
     const validMoves = piece.calculateMoves(pieces);
     set({ availableMoves: validMoves });
+  },
+
+  setAIDifficulty: (difficulty) => {
+    aiPlayer.setDifficulty(difficulty);
+    set({ aiDifficulty: difficulty });
   },
 
   movePiece: (from, to) => {

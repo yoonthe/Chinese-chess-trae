@@ -17,4 +17,4 @@ const CrossMark: React.FC<CrossMarkProps> = ({ className, style }) => {
   );
 };
 
-export default CrossMark;
+export default memo(CrossMark);

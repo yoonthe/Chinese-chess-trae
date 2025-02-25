@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import Board from './components/Board';
-import useGameStore from './models/useGameStore';
 import { IChessPiece, Position } from './types/chess';
+import useGameStore from './models/useGameStore';
+import { AIDifficulty } from './ai/AIPlayer';
 import './App.css';
 
 function App() {
@@ -16,7 +17,8 @@ function App() {
     selectPiece,
     movePiece,
     resetGame,
-    incrementTime
+    incrementTime,
+    setAIDifficulty
   } = useGameStore();
 
   // 处理游戏时间
@@ -69,18 +71,31 @@ function App() {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
+  // 处理难度变更
+  const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setAIDifficulty(e.target.value as AIDifficulty);
+  };
+
   return (
     <div className="app">
       <div className="game-info">
         <h1>中国象棋</h1>
         <p>游戏时间: {formatTime(gameTime)}</p>
         <p>当前回合: {currentPlayer === 'red' ? '红方' : '黑方'}</p>
+        <div className="difficulty-selector">
+          <label>AI难度：</label>
+          <select onChange={handleDifficultyChange}>
+            <option value={AIDifficulty.EASY}>简单</option>
+            <option value={AIDifficulty.MEDIUM}>中等</option>
+            <option value={AIDifficulty.HARD}>困难</option>
+          </select>
+        </div>
         {isGameOver ? (
           <div>
             <p>游戏结束！{winner === 'red' ? '红方' : '黑方'}获胜！</p>
             <button onClick={resetGame}>重新开始</button>
           </div>
-        ) :  <button onClick={resetGame}>重制游戏</button>}
+        ) : <button onClick={resetGame}>重制游戏</button>}
       </div>
 
       <div className="game-board">

@@ -1,5 +1,12 @@
-import { IChessPiece, Position, ChessType, ChessPieceType } from '../types/chess';
+import { IChessPiece, Position, ChessPieceType } from '../types/chess';
 import { SimulatedPiece } from '../types/pieces/simulatedPiece';
+
+// 定义AI难度枚举
+export enum AIDifficulty {
+  EASY = 'easy',
+  MEDIUM = 'medium',
+  HARD = 'hard'
+}
 
 // 棋子基础价值
 const PIECE_VALUES: Record<ChessPieceType, number> = {
@@ -17,14 +24,34 @@ const POSITION_BONUS = 0.1;
 
 // AI玩家类
 export class AIPlayer {
-  private maxDepth: number;
+  private maxDepth: number = 3;
+  private difficulty: AIDifficulty = AIDifficulty.EASY;
 
-  constructor(maxDepth: number = 3) {
-    this.maxDepth = maxDepth;
+  constructor(difficulty: AIDifficulty = AIDifficulty.EASY) {
+    this.setDifficulty(difficulty);
+  }
+
+  setDifficulty(difficulty: AIDifficulty): void {
+    this.difficulty = difficulty;
+    switch (difficulty) {
+      case AIDifficulty.EASY:
+      default:
+        this.maxDepth = 3;
+        break;
+      case AIDifficulty.MEDIUM:
+        this.maxDepth = 4;
+        break;
+      case AIDifficulty.HARD:
+        this.maxDepth = 5;
+        break;
+    }
   }
 
   // 获取AI的最佳移动
   getBestMove(pieces: IChessPiece[]): { from: Position; to: Position } | null {
+    if (this.difficulty === AIDifficulty.EASY) {
+      return this.getRandomMove(pieces);
+    }
     let bestScore = -Infinity;
     let bestMove = null;
 
@@ -48,6 +75,22 @@ export class AIPlayer {
     }
 
     return bestMove;
+  }
+
+  // 新增：简单难度的随机移动
+  private getRandomMove(pieces: IChessPiece[]): { from: Position; to: Position } | null {
+    const blackPieces = pieces.filter(piece => piece.type === 'black');
+    const validMoves: { from: Position; to: Position }[] = [];
+
+    for (const piece of blackPieces) {
+      const moves = piece.calculateMoves(pieces);
+      moves.forEach(move => {
+        validMoves.push({ from: piece.position, to: move });
+      });
+    }
+
+    if (validMoves.length === 0) return null;
+    return validMoves[Math.floor(Math.random() * validMoves.length)];
   }
 
   // Minimax算法实现（带Alpha-Beta剪枝）
